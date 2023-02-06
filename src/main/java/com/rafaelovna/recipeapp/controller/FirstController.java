@@ -1,4 +1,4 @@
-package com.rafaelovna.recipeapp.controllers;
+package com.rafaelovna.recipeapp.controller;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
