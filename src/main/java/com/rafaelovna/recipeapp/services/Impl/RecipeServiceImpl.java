@@ -1,12 +1,15 @@
 package com.rafaelovna.recipeapp.services.Impl;
 
+import com.rafaelovna.recipeapp.exception.ValidationException;
 import com.rafaelovna.recipeapp.model.Recipe;
 import com.rafaelovna.recipeapp.services.RecipeService;
+import com.rafaelovna.recipeapp.services.ValidationService;
 import org.springframework.stereotype.Service;
 
 
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 @Service
@@ -14,30 +17,28 @@ public class RecipeServiceImpl implements RecipeService {
 
     private int id = 0;
     private final Map<Integer, Recipe> recipes = new TreeMap<>();
+    private final ValidationService validationService;
+
+    public RecipeServiceImpl(ValidationService validationService) {
+        this.validationService = validationService;
+    }
 
     @Override
     public Integer addNewRecipe(Recipe recipe) {
+        if (!validationService.validate(recipe)) {
+            throw new ValidationException(recipe.toString());
+        }
         recipes.put(id, recipe);
         return id++;
     }
 
     @Override
-    public Recipe getRecipe(int id) {
-        return recipes.get(id);
+    public Optional<Recipe> getRecipe(int id) {
+        return Optional.ofNullable(recipes.get(id));
     }
 
     @Override
     public String getAllRecipe() {
-//        Iterator<Map.Entry<Integer, Recipe>> iterator = recipes.entrySet().iterator();
-//        while (iterator.hasNext()) {
-//            Map.Entry<Integer, Recipe> entry = iterator.next();
-//            Integer key = entry.getKey();
-//            Recipe value = entry.getValue();
-//            System.out.println(key + " " + value);
-//        }
-//        return iterator.toString();
-//    }
- //       }
         StringBuilder stringBuilder = new StringBuilder();
         for (Map.Entry<Integer, Recipe> entries : recipes.entrySet()) {
             stringBuilder.append(entries.getValue().getName());
@@ -49,11 +50,13 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public Recipe editRecipe(int id, Recipe recipe) {
+        if (!validationService.validate(recipe)) {
+            throw new ValidationException(recipe.toString());
+        }
         if (recipes.containsKey(id)) {
             recipes.put(id, recipe);
-            return recipe;
         }
-        return null;
+        return recipe;
     }
 
     @Override
@@ -63,6 +66,11 @@ public class RecipeServiceImpl implements RecipeService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Map<Integer, Recipe> getAll() {
+        return recipes;
     }
 
 }
