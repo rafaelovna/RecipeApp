@@ -4,6 +4,7 @@ import com.rafaelovna.recipeapp.model.Ingredient;
 import com.rafaelovna.recipeapp.services.IngredientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,53 +23,100 @@ public class IngredientController {
         this.ingredientService = ingredientService;
     }
 
+
+
     @PostMapping("/")
     @Operation(
             summary = "Редактирование ингредиентов по id."
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты отредактированы"
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode="200",
+                    description = "Ингредиенты отредактированы"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный запрос!"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Страница отсутствует, либо не работает."
+            )
+    })
     public ResponseEntity<Integer> addIngredient(@RequestBody Ingredient ingredient) {
         Integer id = ingredientService.addIngredient(ingredient);
         return ResponseEntity.ok(id);
     }
 
+
+
     @GetMapping("/{id}")
     @Operation(
             summary = "Получение ингредиентов по id."
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты получены"
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ингредиенты получены"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный запрос!"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Страница отсутствует, либо не работает."
+            )
+    })
     public ResponseEntity<Ingredient> getIngredientById(@PathVariable int id) {
         Optional<Ingredient> ingredientId = ingredientService.getIngredientId(id);
         return ResponseEntity.of(ingredientId);
     }
 
+
+
     @GetMapping("/")
     @Operation(
             summary = "Получение всех ингредиентов."
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты получены"
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ингредиенты получены"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный запрос!"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Страница отсутствует, либо не работает."
+            )
+    })
     public ResponseEntity<String> getAllIngredient() {
         String allIngredient = ingredientService.getAllIngredient();
         return ResponseEntity.ok(allIngredient);
     }
 
+
+
     @PutMapping("/{id}")
     @Operation(
             summary = "Редактирование ингредиентов."
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты отредактированы"
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ингредиенты отредактированы"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный запрос!"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Страница отсутствует, либо не работает."
+            )
+    })
     public ResponseEntity<Ingredient> editIngredient(@PathVariable int id, @RequestBody Ingredient ingredient) {
         Ingredient ingredient1 = ingredientService.editIngredient(id, ingredient);
         if (ingredient1 == null) {
@@ -77,14 +125,26 @@ public class IngredientController {
         return ResponseEntity.ok(ingredient1);
     }
 
+
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Удаление ингредиентов по id."
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты удалены"
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ингредиенты удалены"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный запрос!"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Страница отсутствует, либо не работает."
+            )
+    })
     public ResponseEntity<Void> deleteIngredient(@PathVariable int id) {
         if (ingredientService.deleteIngredient(id)) {
             return ResponseEntity.ok().build();
@@ -92,14 +152,26 @@ public class IngredientController {
         return ResponseEntity.notFound().build();
     }
 
+
+
     @GetMapping("/all")
     @Operation(
             summary = "Получение ингредиентов с идентификаторами."
     )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты получены"
-    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Ингредиенты получены"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный запрос!"
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "Страница отсутствует, либо не работает."
+            )
+    })
     public ResponseEntity<Map<Integer, Ingredient>> getAll() {
         return ResponseEntity.ok(ingredientService.getAll());
     }
