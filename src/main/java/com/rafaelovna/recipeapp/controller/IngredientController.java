@@ -18,9 +18,6 @@ public class IngredientController {
     @PostMapping("/")
     public ResponseEntity<Integer> addIngredient(@RequestBody Ingredient ingredient) {
         Integer id = ingredientService.addIngredient(ingredient);
-        if (id == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(id);
     }
 
@@ -33,4 +30,26 @@ public class IngredientController {
         return ResponseEntity.ok(ingredientId);
     }
 
+    @GetMapping("/")
+    public ResponseEntity<String> getAllIngredient() {
+        String allIngredient = ingredientService.getAllIngredient();
+        return ResponseEntity.ok(allIngredient);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Ingredient> editIngredient(@PathVariable int id, @RequestBody Ingredient ingredient) {
+        Ingredient ingredient1 = ingredientService.editIngredient(id, ingredient);
+        if (ingredient1 == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ingredient1);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteIngredient(@PathVariable int id) {
+        if (ingredientService.deleteIngredient(id)) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.notFound().build();
+    }
 }
