@@ -26,7 +26,7 @@ public class ValidationServiceImpl implements ValidationService {
                 && ingredient.getName() != null
                 && !StringUtils.isEmpty(ingredient.getName())
                 && ingredient.getMeasureUnite() != null
-                && ingredient.getName().isEmpty()
-                && ingredient.getMeasureUnite().isEmpty();
+                && !ingredient.getName().isEmpty()
+                && !ingredient.getMeasureUnite().isEmpty();
     }
 }

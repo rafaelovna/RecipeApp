@@ -1,12 +1,15 @@
 package com.rafaelovna.recipeapp.services.Impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafaelovna.recipeapp.exception.ValidationException;
 import com.rafaelovna.recipeapp.model.Recipe;
+import com.rafaelovna.recipeapp.services.FileService;
 import com.rafaelovna.recipeapp.services.RecipeService;
 import com.rafaelovna.recipeapp.services.ValidationService;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
-
-
 
 import java.util.Map;
 import java.util.Optional;
@@ -14,13 +17,20 @@ import java.util.TreeMap;
 
 @Service
 public class RecipeServiceImpl implements RecipeService {
+    private final FileService fileService;
 
     private int id = 0;
-    private final Map<Integer, Recipe> recipes = new TreeMap<>();
+    private static Map<Integer, Recipe> recipes = new TreeMap<>();
     private final ValidationService validationService;
 
-    public RecipeServiceImpl(ValidationService validationService) {
+    public RecipeServiceImpl(FileService fileService, ValidationService validationService) {
+        this.fileService = fileService;
         this.validationService = validationService;
+    }
+
+    @PostConstruct
+    private void init() {
+        readFromFile();
     }
 
     @Override
@@ -29,6 +39,7 @@ public class RecipeServiceImpl implements RecipeService {
             throw new ValidationException(recipe.toString());
         }
         recipes.put(id, recipe);
+        saveToFile();
         return id++;
     }
 
@@ -55,8 +66,10 @@ public class RecipeServiceImpl implements RecipeService {
         }
         if (recipes.containsKey(id)) {
             recipes.put(id, recipe);
+            saveToFile();
+            return recipe;
         }
-        return recipe;
+        return null;
     }
 
     @Override
@@ -73,4 +86,23 @@ public class RecipeServiceImpl implements RecipeService {
         return recipes;
     }
 
+
+    private void saveToFile() {
+        try {
+            String json = new ObjectMapper().writeValueAsString(recipes);
+            fileService.saveToFile(json);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private void readFromFile() {
+        try {
+            String json = fileService.readFromFile();
+            recipes = new ObjectMapper().readValue(json, new TypeReference<>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

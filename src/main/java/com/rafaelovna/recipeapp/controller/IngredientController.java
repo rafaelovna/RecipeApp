@@ -23,31 +23,24 @@ public class IngredientController {
         this.ingredientService = ingredientService;
     }
 
-
-
     @PostMapping("/")
     @Operation(
             summary = "Редактирование ингредиентов по id."
     )
     @ApiResponses(value = {
             @ApiResponse(
-                    responseCode="200",
+                    responseCode = "200",
                     description = "Ингредиенты отредактированы"
             ),
             @ApiResponse(
                     responseCode = "400",
                     description = "Неверный запрос!"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
             )
     })
     public ResponseEntity<Integer> addIngredient(@RequestBody Ingredient ingredient) {
         Integer id = ingredientService.addIngredient(ingredient);
         return ResponseEntity.ok(id);
     }
-
 
 
     @GetMapping("/{id}")
@@ -60,19 +53,17 @@ public class IngredientController {
                     description = "Ингредиенты получены"
             ),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
                     responseCode = "404",
                     description = "Страница отсутствует, либо не работает."
             )
     })
     public ResponseEntity<Ingredient> getIngredientById(@PathVariable int id) {
         Optional<Ingredient> ingredientId = ingredientService.getIngredientId(id);
-        return ResponseEntity.of(ingredientId);
+        if (ingredientId.isPresent()) {
+            return ResponseEntity.of(ingredientId);
+        }
+        return ResponseEntity.notFound().build();
     }
-
 
 
     @GetMapping("/")
@@ -82,10 +73,7 @@ public class IngredientController {
     @ApiResponses(value = {
             @ApiResponse(
                     responseCode = "200",
-                    description = "Ингредиенты получены"),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
+                    description = "Ингредиенты получены"
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -94,9 +82,11 @@ public class IngredientController {
     })
     public ResponseEntity<String> getAllIngredient() {
         String allIngredient = ingredientService.getAllIngredient();
-        return ResponseEntity.ok(allIngredient);
+        if (!allIngredient.isEmpty()) {
+            return ResponseEntity.ok(allIngredient);
+        }
+        return ResponseEntity.notFound().build();
     }
-
 
 
     @PutMapping("/{id}")
@@ -126,7 +116,6 @@ public class IngredientController {
     }
 
 
-
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Удаление ингредиентов по id."
@@ -135,10 +124,6 @@ public class IngredientController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Ингредиенты удалены"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
             ),
             @ApiResponse(
                     responseCode = "404",
@@ -153,25 +138,14 @@ public class IngredientController {
     }
 
 
-
     @GetMapping("/all")
     @Operation(
             summary = "Получение ингредиентов с идентификаторами."
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Ингредиенты получены"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
-    })
+    @ApiResponse(
+            responseCode = "200",
+            description = "Ингредиенты получены"
+    )
     public ResponseEntity<Map<Integer, Ingredient>> getAll() {
         return ResponseEntity.ok(ingredientService.getAll());
     }

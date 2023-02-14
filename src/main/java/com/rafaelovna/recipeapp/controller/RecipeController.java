@@ -37,16 +37,12 @@ public class RecipeController {
             @ApiResponse(
                     responseCode = "400",
                     description = "Неверный запрос!"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
             )
     })
     @Parameter(
-                    name = "Название",
-                    example = "Цезарь"
-            )
+            name = "Название",
+            example = "Цезарь"
+    )
     public ResponseEntity<Integer> addRecipe(@RequestBody Recipe recipe) {
         Integer integer = recipeService.addNewRecipe(recipe);
         return ResponseEntity.ok(integer);
@@ -63,20 +59,19 @@ public class RecipeController {
                     description = "Рецепт получен"
             ),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
                     responseCode = "404",
                     description = "Страница отсутствует, либо не работает."
             )
     })
-            @Parameter(
-                    name = "Идентификатор",
-                    example = "1"
-            )
+    @Parameter(
+            name = "Идентификатор",
+            example = "1"
+    )
     public ResponseEntity<Recipe> getRecipe(@PathVariable int id) {
         Optional<Recipe> recipe = recipeService.getRecipe(id);
+        if (recipe.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.of(recipe);
     }
 
@@ -90,16 +85,15 @@ public class RecipeController {
                     description = "Список рецептов получен"
             ),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
                     responseCode = "404",
                     description = "Страница отсутствует, либо не работает."
             )
     })
     public ResponseEntity<String> getAllRecipe() {
         String allRecipe = recipeService.getAllRecipe();
+        if (allRecipe.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
         return ResponseEntity.ok(allRecipe);
     }
 
@@ -141,16 +135,11 @@ public class RecipeController {
                     description = "Рецепт удален"
             ),
             @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
                     responseCode = "404",
                     description = "Страница отсутствует, либо не работает."
             )
     })
     public ResponseEntity<Void> deleteRecipe(@PathVariable int id) {
-
         if (recipeService.deleteRecipe(id)) {
             return ResponseEntity.ok().build();
         }
@@ -161,20 +150,10 @@ public class RecipeController {
     @Operation(
             summary = "Получение списка рецептов с идентификатором."
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Список рецептов с идентификатором получен."
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
-    })
+    @ApiResponse(
+            responseCode = "200",
+            description = "Список рецептов с идентификатором получен."
+    )
     public ResponseEntity<Map<Integer, Recipe>> getAll() {
         return ResponseEntity.ok(recipeService.getAll());
     }
