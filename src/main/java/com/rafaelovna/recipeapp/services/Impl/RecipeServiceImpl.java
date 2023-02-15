@@ -11,6 +11,7 @@ import com.rafaelovna.recipeapp.services.ValidationService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Service;
 
+
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
@@ -20,7 +21,7 @@ public class RecipeServiceImpl implements RecipeService {
     private final FileService fileService;
 
     private int id = 0;
-    private static Map<Integer, Recipe> recipes = new TreeMap<>();
+    private Map<Integer, Recipe> recipes = new TreeMap<>();
     private final ValidationService validationService;
 
     public RecipeServiceImpl(FileService fileService, ValidationService validationService) {
@@ -76,6 +77,7 @@ public class RecipeServiceImpl implements RecipeService {
     public boolean deleteRecipe(int id) {
         if (recipes.containsKey(id)) {
             recipes.remove(id);
+            saveToFile();
             return true;
         }
         return false;
@@ -99,6 +101,9 @@ public class RecipeServiceImpl implements RecipeService {
     private void readFromFile() {
         try {
             String json = fileService.readFromFile();
+            if (json.isEmpty()) {
+                System.out.println("Нет сохраненных рецептов!");
+            }
             recipes = new ObjectMapper().readValue(json, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {

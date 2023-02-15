@@ -36,9 +36,6 @@ public class FileServiceImpl implements FileService {
     public String readFromFile() {
         try {
             Path path = Path.of(dataFilePath, dataFileName);
-            if (Files.readString(path).isEmpty()) {
-                Files.createFile(path);
-            }
             return Files.readString(path);
         } catch (IOException e) {
             throw new RuntimeException(e);

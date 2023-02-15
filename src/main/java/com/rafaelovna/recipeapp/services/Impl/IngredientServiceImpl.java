@@ -22,7 +22,7 @@ public class IngredientServiceImpl implements IngredientService {
     private final IngredientFileService ingredientFileService;
 
     private int id = 0;
-    private static Map<Integer, Ingredient> ingredients = new TreeMap<>();
+    private Map<Integer, Ingredient> ingredients = new TreeMap<>();
     private final ValidationService validationService;
 
     public IngredientServiceImpl(IngredientFileService ingredientFileService, ValidationService validationService) {
@@ -77,6 +77,7 @@ public class IngredientServiceImpl implements IngredientService {
     public boolean deleteIngredient(int id) {
         if (ingredients.containsKey(id)) {
             ingredients.remove(id);
+            saveToFile();
             return true;
         }
         return false;
@@ -99,7 +100,10 @@ public class IngredientServiceImpl implements IngredientService {
     private void readFromFile() {
         try {
             String json = ingredientFileService.readFromFile();
-            ingredients = new ObjectMapper().readValue(json, new TypeReference<Map<Integer, Ingredient>>() {
+            if (json.isEmpty()) {
+                System.out.println("Нет сохраненных ингредиентов!");
+            }
+            ingredients = new ObjectMapper().readValue(json, new TypeReference<>() {
             });
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
