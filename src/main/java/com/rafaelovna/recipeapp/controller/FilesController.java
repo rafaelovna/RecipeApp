@@ -44,12 +44,12 @@ public class FilesController {
 
 
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadDatafile(@RequestParam MultipartFile IngredientFile) {
+    public ResponseEntity<Void> uploadDatafile(@RequestParam MultipartFile file) {
         fileService.cleanDataFile();
         File dataFile = fileService.getDataFile();
 
         try (FileOutputStream fos = new FileOutputStream(dataFile)) {
-            IOUtils.copy(IngredientFile.getInputStream(), fos);
+            IOUtils.copy(file.getInputStream(), fos);
             return ResponseEntity.ok().build();
         } catch (IOException e) {
             e.printStackTrace();
