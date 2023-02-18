@@ -1,10 +1,10 @@
 package com.rafaelovna.recipeapp.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class Ingredient {
@@ -13,4 +13,8 @@ public class Ingredient {
     private int weight;
     private String measureUnite;
 
+    @Override
+    public String toString() {
+        return name + " - " + weight + " " + measureUnite;
+    }
 }

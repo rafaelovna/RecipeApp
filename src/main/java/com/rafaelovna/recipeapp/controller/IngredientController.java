@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,13 +16,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/ingredient")
 @Tag(name = "ИНГРЕДИЕНТЫ", description = "CRUD операции для работы с ингредиентами")
+@RequiredArgsConstructor
 public class IngredientController {
 
     private final IngredientService ingredientService;
 
-    public IngredientController(IngredientService ingredientService) {
-        this.ingredientService = ingredientService;
-    }
 
     @PostMapping("/")
     @Operation(

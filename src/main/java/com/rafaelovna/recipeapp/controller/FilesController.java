@@ -1,10 +1,17 @@
 package com.rafaelovna.recipeapp.controller;
 
-import com.rafaelovna.recipeapp.services.FileService;
-import com.rafaelovna.recipeapp.services.IngredientFileService;
-import org.apache.commons.io.IOUtils;
+
+import com.rafaelovna.recipeapp.services.IngredientService;
+import com.rafaelovna.recipeapp.services.RecipeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -15,61 +22,122 @@ import java.io.*;
 
 @RestController
 @RequestMapping("/files")
+@Tag(name = "ИМПОРТ И ЭКСПОРТ ФАЙЛОВ", description = "Импорт и экспорт ингредиентов и рецептов")
+@RequiredArgsConstructor
 public class FilesController {
 
 
-    private final FileService fileService;
-    private final IngredientFileService ingredientFileService;
 
-    public FilesController(FileService fileService, IngredientFileService ingredientFileService) {
-        this.fileService = fileService;
-        this.ingredientFileService = ingredientFileService;
-    }
+    private final IngredientService ingredientService;
+    private final RecipeService recipeService;
 
 
     @GetMapping(value = "/export")
-    public ResponseEntity<InputStreamResource> downloadDataFile() throws FileNotFoundException {
-        File file = fileService.getDataFile();
-        if (file.exists()) {
+    @Operation(
+            summary = "Выгрузка файла рецептов"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Выгрузка файла рецептов прошла успешно"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный(плохой) запрос!"
+            )
+    })
+    public ResponseEntity<InputStreamResource> downloadDataFile() {
+        try {
+            File file = recipeService.readFile();
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             return ResponseEntity.ok()
                     .contentType(MediaType.APPLICATION_JSON)
                     .contentLength(file.length())
                     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipeLog.json\"")
                     .body(resource);
-        } else {
-            return ResponseEntity.noContent().build();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
     }
 
 
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadDatafile(@RequestParam MultipartFile file) {
-        fileService.cleanDataFile();
-        File dataFile = fileService.getDataFile();
-
-        try (FileOutputStream fos = new FileOutputStream(dataFile)) {
-            IOUtils.copy(file.getInputStream(), fos);
-            return ResponseEntity.ok().build();
+    @Operation(
+            summary = "Загрузка файла рецептов"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Загрузка файла рецептов прошла успешно"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный(плохой) запрос!"
+            )
+    })
+    public ResponseEntity<String> uploadDatafile(@RequestParam MultipartFile file) {
+        try {
+            recipeService.uploadFile(file);
+            return ResponseEntity.ok("Файл успешно импортирован.");
         } catch (IOException e) {
             e.printStackTrace();
+            return ResponseEntity.badRequest().body("Ошибка при загрузке файла.");
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
 
 
     @PostMapping(value = "/import/ingredient", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Void> uploadIngredient(@RequestParam MultipartFile IngredientFile) {
-        ingredientFileService.cleanDataFile();
-        File file = ingredientFileService.getDataFile();
-
-        try (FileOutputStream fos = new FileOutputStream(file)){
-
-            IOUtils.copy(IngredientFile.getInputStream(), fos);
-            return ResponseEntity.ok().build();
+    @Operation(
+            summary = "Загрузка файла ингредиентов"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Загрузка файла ингредиентов прошла успешно"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный(плохой) запрос!"
+            )
+    })
+    public ResponseEntity<String> uploadIngredient(@RequestParam MultipartFile dataFile) {
+        try {
+            ingredientService.uploadFile(dataFile);
+            return ResponseEntity.ok("Файл успешно импортирован.");
         } catch (IOException e) {
-           e.printStackTrace();
+            e.printStackTrace();
+            return ResponseEntity.badRequest().body("Ошибка при загрузке файла.");
         }
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+
+    @GetMapping(value = "/export/txt")
+    @Operation(
+            summary = "Выгрузка файла рецептов в формате текста"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "Выгрузка файла рецептов прошла успешно"
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "Неверный(плохой) запрос!"
+            )
+    })
+    public ResponseEntity<InputStreamResource> downloadRecipeTxtFile() {
+        try {
+            File file = recipeService.prepareRecipesTxt();
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            return ResponseEntity.ok()
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentLength(file.length())
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipeLog.json\"")
+                    .body(resource);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
     }
 }

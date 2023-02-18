@@ -1,5 +1,6 @@
 package com.rafaelovna.recipeapp.controller;
 
+
 import com.rafaelovna.recipeapp.model.Recipe;
 import com.rafaelovna.recipeapp.services.RecipeService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -7,6 +8,8 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,14 +19,11 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/recipe")
 @Tag(name = "РЕЦЕПТЫ", description = "CRUD операции для работы с рецептами")
-
+@RequiredArgsConstructor
 public class RecipeController {
 
     private final RecipeService recipeService;
 
-    public RecipeController(RecipeService recipeService) {
-        this.recipeService = recipeService;
-    }
 
     @PostMapping("/")
     @Operation(
@@ -47,6 +47,7 @@ public class RecipeController {
         Integer integer = recipeService.addNewRecipe(recipe);
         return ResponseEntity.ok(integer);
     }
+
 
     @GetMapping("/{id}")
     @Operation(
@@ -75,6 +76,8 @@ public class RecipeController {
         return ResponseEntity.of(recipe);
     }
 
+
+
     @GetMapping("/")
     @Operation(
             summary = "Получение списка всех рецептов"
@@ -90,12 +93,14 @@ public class RecipeController {
             )
     })
     public ResponseEntity<String> getAllRecipe() {
-        String allRecipe = recipeService.getAllRecipe();
-        if (allRecipe.isEmpty()) {
+        recipeService.getAllRecipe();
+        if ((recipeService.getAllRecipe()).isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        return ResponseEntity.ok(allRecipe);
+        return ResponseEntity.ok(recipeService.getAllRecipe());
     }
+
+
 
     @PutMapping("/{id}")
     @Operation(
@@ -124,6 +129,8 @@ public class RecipeController {
         return ResponseEntity.ok(recipe1);
     }
 
+
+
     @DeleteMapping("/{id}")
     @Operation(
             summary = "Удаление рецепта",
@@ -145,6 +152,8 @@ public class RecipeController {
         }
         return ResponseEntity.notFound().build();
     }
+
+
 
     @GetMapping("/all")
     @Operation(

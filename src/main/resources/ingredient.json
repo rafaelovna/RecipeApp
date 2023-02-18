@@ -1,1 +1,12 @@
-{"0":{"name":"Вода","weight":350,"measureUnite":"мл"},"1":{"name":"Картофель","weight":350,"measureUnite":"гр"}}
+{
+  "0": {
+    "name": "Вода",
+    "weight": 350,
+    "measureUnite": "мл"
+  },
+  "1": {
+    "name": "Картофель",
+    "weight": 350,
+    "measureUnite": "гр"
+  }
+}

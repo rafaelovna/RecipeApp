@@ -1,38 +1,51 @@
 package com.rafaelovna.recipeapp.services.Impl;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rafaelovna.recipeapp.exception.ValidationException;
 import com.rafaelovna.recipeapp.model.Ingredient;
-import com.rafaelovna.recipeapp.services.IngredientFileService;
+
+import com.rafaelovna.recipeapp.services.FileService;
 import com.rafaelovna.recipeapp.services.IngredientService;
 import com.rafaelovna.recipeapp.services.ValidationService;
 import jakarta.annotation.PostConstruct;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+
+import java.io.IOException;
+import java.nio.file.Path;
 
 import java.util.Map;
 import java.util.Optional;
 import java.util.TreeMap;
 
 @Service
+@RequiredArgsConstructor
 public class IngredientServiceImpl implements IngredientService {
 
-    private final IngredientFileService ingredientFileService;
+    private final FileService fileService;
 
-    private int id = 0;
+    private static int id = 1;
     private Map<Integer, Ingredient> ingredients = new TreeMap<>();
     private final ValidationService validationService;
 
-    public IngredientServiceImpl(IngredientFileService ingredientFileService, ValidationService validationService) {
-        this.ingredientFileService = ingredientFileService;
-        this.validationService = validationService;
-    }
+
+    @Value("${path.to.data.file}")
+    private String dataFilePath;
+
+
+    @Value("${name.of.data.file.ingredient}")
+    private String dataFileName;
+
+    private Path ingredientPath;
+
 
     @PostConstruct
     private void init() {
-        readFromFile();
+        ingredientPath = Path.of(dataFilePath, dataFileName);
+        ingredients = fileService.readFromFile(ingredientPath, new TypeReference<>() {});
     }
 
     @Override
@@ -40,9 +53,9 @@ public class IngredientServiceImpl implements IngredientService {
         if (!validationService.validate(ingredient)) {
             throw new ValidationException(ingredient.toString());
         }
-        ingredients.put(id, ingredient);
-        saveToFile();
-        return id++;
+        ingredients.put(id++, ingredient);
+        fileService.saveToFile(ingredients, ingredientPath);
+        return id;
     }
 
     @Override
@@ -67,7 +80,7 @@ public class IngredientServiceImpl implements IngredientService {
         }
         if (ingredients.containsKey(id)) {
             ingredients.put(id, ingredient);
-            saveToFile();
+            fileService.saveToFile(ingredients, ingredientPath);
             return ingredient;
         }
         return null;
@@ -77,7 +90,7 @@ public class IngredientServiceImpl implements IngredientService {
     public boolean deleteIngredient(int id) {
         if (ingredients.containsKey(id)) {
             ingredients.remove(id);
-            saveToFile();
+            fileService.saveToFile(ingredients, ingredientPath);
             return true;
         }
         return false;
@@ -88,25 +101,12 @@ public class IngredientServiceImpl implements IngredientService {
         return ingredients;
     }
 
-    private void saveToFile() {
-        try {
-            String json = new ObjectMapper().writeValueAsString(ingredients);
-            ingredientFileService.saveToFile(json);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+    @Override
+    public void uploadFile(MultipartFile file) throws IOException {
+        fileService.uploadFile(file,ingredientPath);
+        ingredients = fileService.readFromFile(ingredientPath, new TypeReference<>() {
+        });
     }
 
-    private void readFromFile() {
-        try {
-            String json = ingredientFileService.readFromFile();
-            if (json.isEmpty()) {
-                System.out.println("Нет сохраненных ингредиентов!");
-            }
-            ingredients = new ObjectMapper().readValue(json, new TypeReference<>() {
-            });
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-    }
+
 }

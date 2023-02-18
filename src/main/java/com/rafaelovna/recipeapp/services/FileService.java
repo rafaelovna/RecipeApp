@@ -1,14 +1,22 @@
 package com.rafaelovna.recipeapp.services;
 
-import java.io.File;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
 
 public interface FileService {
 
-    boolean saveToFile(String json);
+    <T> void saveToFile(Map<Integer, T> map, Path path);
 
-    String readFromFile();
+    <T> Map<Integer, T> readFromFile(Path path, com.fasterxml.jackson.core.type.TypeReference<HashMap<Integer, T>> typeReference);
 
-    boolean cleanDataFile();
+    void uploadFile(MultipartFile file, Path path) throws IOException;
 
-    File getDataFile();
+    void cleanDataFile(Path path);
+
+    Path saveFile(String content, Path path) throws IOException;
 }

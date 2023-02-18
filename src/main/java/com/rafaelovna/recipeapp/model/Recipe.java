@@ -1,12 +1,12 @@
 package com.rafaelovna.recipeapp.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 public class Recipe {
@@ -16,4 +16,10 @@ public class Recipe {
     private List<Ingredient> ingredients;
     private List<String> steps;
 
+
+    @Override
+    public String toString() {
+        return name +
+                "\n Время приготовления: " + cookingTimeInMin + " минут.";
+    }
 }
