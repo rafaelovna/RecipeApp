@@ -45,7 +45,8 @@ public class IngredientServiceImpl implements IngredientService {
     @PostConstruct
     private void init() {
         ingredientPath = Path.of(dataFilePath, dataFileName);
-        ingredients = fileService.readFromFile(ingredientPath, new TypeReference<>() {});
+        ingredients = fileService.readFromFile(ingredientPath, new TypeReference<>() {
+        });
     }
 
     @Override
@@ -103,7 +104,7 @@ public class IngredientServiceImpl implements IngredientService {
 
     @Override
     public void uploadFile(MultipartFile file) throws IOException {
-        fileService.uploadFile(file,ingredientPath);
+        fileService.uploadFile(file, ingredientPath);
         ingredients = fileService.readFromFile(ingredientPath, new TypeReference<>() {
         });
     }

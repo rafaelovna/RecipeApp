@@ -23,18 +23,10 @@ public class IngredientController {
 
 
     @PostMapping("/")
-    @Operation(
-            summary = "Редактирование ингредиентов по id."
-    )
+    @Operation(summary = "Редактирование ингредиентов по id.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Ингредиенты отредактированы"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            )
+            @ApiResponse(responseCode = "200", description = "Ингредиенты отредактированы"),
+            @ApiResponse(responseCode = "400", description = "Неверный запрос!")
     })
     public ResponseEntity<Integer> addIngredient(@RequestBody Ingredient ingredient) {
         Integer id = ingredientService.addIngredient(ingredient);
@@ -43,18 +35,10 @@ public class IngredientController {
 
 
     @GetMapping("/{id}")
-    @Operation(
-            summary = "Получение ингредиентов по id."
-    )
+    @Operation(summary = "Получение ингредиентов по id.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Ингредиенты получены"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Ингредиенты получены"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<Ingredient> getIngredientById(@PathVariable int id) {
         Optional<Ingredient> ingredientId = ingredientService.getIngredientId(id);
@@ -66,18 +50,10 @@ public class IngredientController {
 
 
     @GetMapping("/")
-    @Operation(
-            summary = "Получение всех ингредиентов."
-    )
+    @Operation(summary = "Получение всех ингредиентов.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Ингредиенты получены"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Ингредиенты получены"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<String> getAllIngredient() {
         String allIngredient = ingredientService.getAllIngredient();
@@ -89,22 +65,11 @@ public class IngredientController {
 
 
     @PutMapping("/{id}")
-    @Operation(
-            summary = "Редактирование ингредиентов."
-    )
+    @Operation(summary = "Редактирование ингредиентов.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Ингредиенты отредактированы"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Ингредиенты отредактированы"),
+            @ApiResponse(responseCode = "400", description = "Неверный запрос!"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<Ingredient> editIngredient(@PathVariable int id, @RequestBody Ingredient ingredient) {
         Ingredient ingredient1 = ingredientService.editIngredient(id, ingredient);
@@ -116,18 +81,10 @@ public class IngredientController {
 
 
     @DeleteMapping("/{id}")
-    @Operation(
-            summary = "Удаление ингредиентов по id."
-    )
+    @Operation(summary = "Удаление ингредиентов по id.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Ингредиенты удалены"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Ингредиенты удалены"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<Void> deleteIngredient(@PathVariable int id) {
         if (ingredientService.deleteIngredient(id)) {
@@ -138,13 +95,8 @@ public class IngredientController {
 
 
     @GetMapping("/all")
-    @Operation(
-            summary = "Получение ингредиентов с идентификаторами."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Ингредиенты получены"
-    )
+    @Operation(summary = "Получение ингредиентов с идентификаторами.")
+    @ApiResponse(responseCode = "200", description = "Ингредиенты получены")
     public ResponseEntity<Map<Integer, Ingredient>> getAll() {
         return ResponseEntity.ok(ingredientService.getAll());
     }

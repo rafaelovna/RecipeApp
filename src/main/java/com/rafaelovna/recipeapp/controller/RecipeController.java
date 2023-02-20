@@ -26,23 +26,13 @@ public class RecipeController {
 
 
     @PostMapping("/")
-    @Operation(
-            summary = "Добавление рецепта"
-    )
+    @Operation(summary = "Добавление рецепта")
+    @Parameter(name = "Название", example = "Цезарь")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Рецепт добавлен"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            )
+            @ApiResponse(responseCode = "200", description = "Рецепт добавлен"),
+            @ApiResponse(responseCode = "400", description = "Неверный запрос!")
     })
-    @Parameter(
-            name = "Название",
-            example = "Цезарь"
-    )
+
     public ResponseEntity<Integer> addRecipe(@RequestBody Recipe recipe) {
         Integer integer = recipeService.addNewRecipe(recipe);
         return ResponseEntity.ok(integer);
@@ -50,24 +40,13 @@ public class RecipeController {
 
 
     @GetMapping("/{id}")
-    @Operation(
-            summary = "Получение рецепта",
-            description = "Получение рецепта по id."
-    )
+    @Operation(summary = "Получение рецепта", description = "Получение рецепта по id.")
+    @Parameter(name = "Идентификатор", example = "1")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Рецепт получен"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Рецепт получен"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
-    @Parameter(
-            name = "Идентификатор",
-            example = "1"
-    )
+
     public ResponseEntity<Recipe> getRecipe(@PathVariable int id) {
         Optional<Recipe> recipe = recipeService.getRecipe(id);
         if (recipe.isEmpty()) {
@@ -77,20 +56,11 @@ public class RecipeController {
     }
 
 
-
     @GetMapping("/")
-    @Operation(
-            summary = "Получение списка всех рецептов"
-    )
+    @Operation(summary = "Получение списка всех рецептов")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Список рецептов получен"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Список рецептов получен"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<String> getAllRecipe() {
         recipeService.getAllRecipe();
@@ -101,25 +71,12 @@ public class RecipeController {
     }
 
 
-
     @PutMapping("/{id}")
-    @Operation(
-            summary = "Редактирование рецепта",
-            description = "Редактирование рецепта по id."
-    )
+    @Operation(summary = "Редактирование рецепта", description = "Редактирование рецепта по id.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Рецепт отредактирован"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный запрос!"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Рецепт отредактирован"),
+            @ApiResponse(responseCode = "400", description = "Неверный запрос!"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<Recipe> editRecipe(@PathVariable int id, @RequestBody Recipe recipe) {
         Recipe recipe1 = recipeService.editRecipe(id, recipe);
@@ -130,21 +87,11 @@ public class RecipeController {
     }
 
 
-
     @DeleteMapping("/{id}")
-    @Operation(
-            summary = "Удаление рецепта",
-            description = "Удаление рецепта по id."
-    )
+    @Operation(summary = "Удаление рецепта", description = "Удаление рецепта по id.")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Рецепт удален"
-            ),
-            @ApiResponse(
-                    responseCode = "404",
-                    description = "Страница отсутствует, либо не работает."
-            )
+            @ApiResponse(responseCode = "200", description = "Рецепт удален"),
+            @ApiResponse(responseCode = "404", description = "Страница отсутствует, либо не работает.")
     })
     public ResponseEntity<Void> deleteRecipe(@PathVariable int id) {
         if (recipeService.deleteRecipe(id)) {
@@ -154,15 +101,9 @@ public class RecipeController {
     }
 
 
-
     @GetMapping("/all")
-    @Operation(
-            summary = "Получение списка рецептов с идентификатором."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "Список рецептов с идентификатором получен."
-    )
+    @Operation(summary = "Получение списка рецептов с идентификатором.")
+    @ApiResponse(responseCode = "200", description = "Список рецептов с идентификатором получен.")
     public ResponseEntity<Map<Integer, Recipe>> getAll() {
         return ResponseEntity.ok(recipeService.getAll());
     }

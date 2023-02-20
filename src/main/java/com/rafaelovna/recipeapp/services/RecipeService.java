@@ -1,4 +1,5 @@
 package com.rafaelovna.recipeapp.services;
+
 import com.rafaelovna.recipeapp.model.Recipe;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -15,7 +16,6 @@ public interface RecipeService {
     Optional<Recipe> getRecipe(int id);
 
     Map<Integer, Recipe> getAll();
-
 
     String getAllRecipe();
 

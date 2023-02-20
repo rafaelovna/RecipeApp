@@ -33,18 +33,10 @@ public class FilesController {
 
 
     @GetMapping(value = "/export")
-    @Operation(
-            summary = "Выгрузка файла рецептов"
-    )
+    @Operation(summary = "Выгрузка файла рецептов")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Выгрузка файла рецептов прошла успешно"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный(плохой) запрос!"
-            )
+            @ApiResponse(responseCode = "200", description = "Выгрузка файла рецептов прошла успешно"),
+            @ApiResponse(responseCode = "400", description = "Неверный(плохой) запрос!")
     })
     public ResponseEntity<InputStreamResource> downloadDataFile() {
         try {
@@ -63,18 +55,10 @@ public class FilesController {
 
 
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(
-            summary = "Загрузка файла рецептов"
-    )
+    @Operation(summary = "Загрузка файла рецептов")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Загрузка файла рецептов прошла успешно"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный(плохой) запрос!"
-            )
+            @ApiResponse(responseCode = "200", description = "Загрузка файла рецептов прошла успешно"),
+            @ApiResponse(responseCode = "400", description = "Неверный(плохой) запрос!")
     })
     public ResponseEntity<String> uploadDatafile(@RequestParam MultipartFile file) {
         try {
@@ -88,18 +72,10 @@ public class FilesController {
 
 
     @PostMapping(value = "/import/ingredient", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(
-            summary = "Загрузка файла ингредиентов"
-    )
+    @Operation(summary = "Загрузка файла ингредиентов")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Загрузка файла ингредиентов прошла успешно"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный(плохой) запрос!"
-            )
+            @ApiResponse(responseCode = "200", description = "Загрузка файла ингредиентов прошла успешно"),
+            @ApiResponse(responseCode = "400", description = "Неверный(плохой) запрос!")
     })
     public ResponseEntity<String> uploadIngredient(@RequestParam MultipartFile dataFile) {
         try {
@@ -113,27 +89,19 @@ public class FilesController {
 
 
     @GetMapping(value = "/export/txt")
-    @Operation(
-            summary = "Выгрузка файла рецептов в формате текста"
-    )
+    @Operation(summary = "Выгрузка файла рецептов в формате текста")
     @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Выгрузка файла рецептов прошла успешно"
-            ),
-            @ApiResponse(
-                    responseCode = "400",
-                    description = "Неверный(плохой) запрос!"
-            )
+            @ApiResponse(responseCode = "200", description = "Выгрузка файла рецептов прошла успешно"),
+            @ApiResponse(responseCode = "400", description = "Неверный(плохой) запрос!")
     })
     public ResponseEntity<InputStreamResource> downloadRecipeTxtFile() {
         try {
             File file = recipeService.prepareRecipesTxt();
             InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
             return ResponseEntity.ok()
-                    .contentType(MediaType.APPLICATION_JSON)
+                    .contentType(MediaType.TEXT_PLAIN)
                     .contentLength(file.length())
-                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipeLog.json\"")
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"RecipeLog.txt\"")
                     .body(resource);
         } catch (IOException e) {
             e.printStackTrace();
